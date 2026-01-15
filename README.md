@@ -1,1 +1,200 @@
 # Expense-tracker
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            width: 360px;
+            margin: auto;
+            border-radius: 5px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+        }
+        ul {
+            padding: 0;
+        }
+        li {
+            list-style: none;
+            background: #eee;
+            margin-top: 5px;
+            padding: 6px;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Expense Tracker</h1>
+
+<div class="box">
+
+    <div id="setup">
+        <select id="period">
+            <option value="">Select Period</option>
+            <option>Weekly</option>
+            <option>Monthly</option>
+            <option>Yearly</option>
+        </select>
+
+        <input id="budget" type="number" placeholder="Enter total money you have">
+
+        <button onclick="start()">Start</button>
+    </div>
+
+    <div id="app" class="hidden">
+
+        <input id="amount" type="number" placeholder="Enter amount">
+
+        <input id="date" type="text" placeholder="Enter date (DD-MM-YYYY)">
+
+        <select id="category">
+            <option value="">Select category</option>
+            <option>Food</option>
+            <option>Travel</option>
+            <option>Entertainment</option>
+            <option>Shopping</option>
+            <option>Other</option>
+        </select>
+
+        <input id="custom" type="text" placeholder="Custom category (if Other)">
+
+        <button onclick="addExpense()">Add Expense</button>
+        <button onclick="showCategoryTotal()">Category Wise Total</button>
+        <button onclick="showTotal()">Total & Balance</button>
+        <button onclick="deleteLast()">Delete Last</button>
+
+        <h3>Expenses</h3>
+        <ul id="list"></ul>
+
+        <h3 id="output"></h3>
+
+    </div>
+</div>
+
+<script>
+    expenses = []
+    totalMoney = 0
+    period = ""
+
+    function start() {
+        period = document.getElementById("period").value
+        totalMoney = document.getElementById("budget").value
+
+        if (period == "" || totalMoney == "") {
+            alert("Select period and enter money")
+            return
+        }
+
+        document.getElementById("setup").classList.add("hidden")
+        document.getElementById("app").classList.remove("hidden")
+    }
+
+    function addExpense() {
+        amount = document.getElementById("amount").value
+        date = document.getElementById("date").value
+        category = document.getElementById("category").value
+        custom = document.getElementById("custom").value
+
+        if (amount == "" || date == "" || category == "") {
+            alert("Fill all fields")
+            return
+        }
+
+        if (category == "Other" && custom != "") {
+            category = custom
+        }
+
+        expenses.push({
+            amount: Number(amount),
+            date: date,
+            category: category
+        })
+
+        document.getElementById("amount").value = ""
+        document.getElementById("date").value = ""
+        document.getElementById("category").value = ""
+        document.getElementById("custom").value = ""
+
+        showExpenses()
+    }
+
+    function showExpenses() {
+        list = document.getElementById("list")
+        list.innerHTML = ""
+
+        for (i = 0; i < expenses.length; i++) {
+            li = document.createElement("li")
+            li.innerText =
+                "Date: " + expenses[i].date +
+                " | ₹" + expenses[i].amount +
+                " | " + expenses[i].category
+            list.appendChild(li)
+        }
+    }
+
+    function showCategoryTotal() {
+        food = 0
+        travel = 0
+        entertainment = 0
+        shopping = 0
+        other = 0
+
+        for (i = 0; i < expenses.length; i++) {
+            if (expenses[i].category == "Food") food += expenses[i].amount
+            else if (expenses[i].category == "Travel") travel += expenses[i].amount
+            else if (expenses[i].category == "Entertainment") entertainment += expenses[i].amount
+            else if (expenses[i].category == "Shopping") shopping += expenses[i].amount
+            else other += expenses[i].amount
+        }
+
+        document.getElementById("output").innerText =
+            "Food: ₹" + food +
+            " | Travel: ₹" + travel +
+            " | Entertainment: ₹" + entertainment +
+            " | Shopping: ₹" + shopping +
+            " | Other: ₹" + other
+    }
+
+    function showTotal() {
+        total = 0
+        for (i = 0; i < expenses.length; i++) {
+            total += expenses[i].amount
+        }
+
+        balance = totalMoney - total
+
+        document.getElementById("output").innerText =
+            period + " Total: ₹" + total +
+            " | Remaining Balance: ₹" + balance
+    }
+
+    function deleteLast() {
+        if (expenses.length == 0) {
+            alert("No expense to delete")
+        } else {
+            expenses.pop()
+            showExpenses()
+        }
+    }
+</script>
+
+</body>
+</html>
+
