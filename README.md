@@ -1,200 +1,122 @@
-# Expense-tracker
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Expense Tracker</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f2f2f2;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .box {
-            background: white;
-            padding: 20px;
-            width: 360px;
-            margin: auto;
-            border-radius: 5px;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-        }
-        ul {
-            padding: 0;
-        }
-        li {
-            list-style: none;
-            background: #eee;
-            margin-top: 5px;
-            padding: 6px;
-            font-size: 14px;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
-</head>
-<body>
+expenses = []
 
-<h1>Expense Tracker</h1>
+print("Select Expense Type")
+print("1 Weekly")
+print("2 Monthly")
+print("3 Yearly")
 
-<div class="box">
+period_choice = input("Enter choice : ")
 
-    <div id="setup">
-        <select id="period">
-            <option value="">Select Period</option>
-            <option>Weekly</option>
-            <option>Monthly</option>
-            <option>Yearly</option>
-        </select>
+if period_choice == "1":
+    period = "Weekly"
+elif period_choice == "2":
+    period = "Monthly"
+elif period_choice == "3":
+    period = "Yearly"
+else:
+    print("Invalid choice")
+    exit()
 
-        <input id="budget" type="number" placeholder="Enter total money you have">
+total_money = float(input("Enter total money you have : "))
 
-        <button onclick="start()">Start</button>
-    </div>
+while True:
+    print("\n1 Add Expense")
+    print("2 View Expenses")
+    print("3 Category Wise Total")
+    print("4 Total Expense & Balance")
+    print("5 Delete Last Expense")
+    print("6 Exit")
 
-    <div id="app" class="hidden">
+    choice = input("Enter your choice : ")
 
-        <input id="amount" type="number" placeholder="Enter amount">
+    if choice == "1":
+        print("\nSelect Category")
+        print("1 Food")
+        print("2 Travel")
+        print("3 Entertainment")
+        print("4 Shopping")
+        print("5 Other")
 
-        <input id="date" type="text" placeholder="Enter date (DD-MM-YYYY)">
+        cat_choice = input("Enter category number : ")
 
-        <select id="category">
-            <option value="">Select category</option>
-            <option>Food</option>
-            <option>Travel</option>
-            <option>Entertainment</option>
-            <option>Shopping</option>
-            <option>Other</option>
-        </select>
+        if cat_choice == "1":
+            category = "Food"
+        elif cat_choice == "2":
+            category = "Travel"
+        elif cat_choice == "3":
+            category = "Entertainment"
+        elif cat_choice == "4":
+            category = "Shopping"
+        elif cat_choice == "5":
+            category = input("Enter custom category : ")
+        else:
+            print("Invalid category")
+            continue
 
-        <input id="custom" type="text" placeholder="Custom category (if Other)">
+        amount = float(input("Enter amount : "))
+        expense_date = input("Enter date (DD-MM-YYYY) : ")
 
-        <button onclick="addExpense()">Add Expense</button>
-        <button onclick="showCategoryTotal()">Category Wise Total</button>
-        <button onclick="showTotal()">Total & Balance</button>
-        <button onclick="deleteLast()">Delete Last</button>
-
-        <h3>Expenses</h3>
-        <ul id="list"></ul>
-
-        <h3 id="output"></h3>
-
-    </div>
-</div>
-
-<script>
-    expenses = []
-    totalMoney = 0
-    period = ""
-
-    function start() {
-        period = document.getElementById("period").value
-        totalMoney = document.getElementById("budget").value
-
-        if (period == "" || totalMoney == "") {
-            alert("Select period and enter money")
-            return
+        expense = {
+            "amount": amount,
+            "category": category,
+            "date": expense_date
         }
 
-        document.getElementById("setup").classList.add("hidden")
-        document.getElementById("app").classList.remove("hidden")
-    }
+        expenses.append(expense)
+        print("Expense added successfully")
 
-    function addExpense() {
-        amount = document.getElementById("amount").value
-        date = document.getElementById("date").value
-        category = document.getElementById("category").value
-        custom = document.getElementById("custom").value
+    elif choice == "2":
+        if expenses == []:
+            print("No expenses found")
+        else:
+            for e in expenses:
+                print("Date:", e["date"], "Amount:", e["amount"], "Category:", e["category"])
 
-        if (amount == "" || date == "" || category == "") {
-            alert("Fill all fields")
-            return
-        }
-
-        if (category == "Other" && custom != "") {
-            category = custom
-        }
-
-        expenses.push({
-            amount: Number(amount),
-            date: date,
-            category: category
-        })
-
-        document.getElementById("amount").value = ""
-        document.getElementById("date").value = ""
-        document.getElementById("category").value = ""
-        document.getElementById("custom").value = ""
-
-        showExpenses()
-    }
-
-    function showExpenses() {
-        list = document.getElementById("list")
-        list.innerHTML = ""
-
-        for (i = 0; i < expenses.length; i++) {
-            li = document.createElement("li")
-            li.innerText =
-                "Date: " + expenses[i].date +
-                " | ₹" + expenses[i].amount +
-                " | " + expenses[i].category
-            list.appendChild(li)
-        }
-    }
-
-    function showCategoryTotal() {
+    elif choice == "3":
         food = 0
         travel = 0
         entertainment = 0
         shopping = 0
         other = 0
 
-        for (i = 0; i < expenses.length; i++) {
-            if (expenses[i].category == "Food") food += expenses[i].amount
-            else if (expenses[i].category == "Travel") travel += expenses[i].amount
-            else if (expenses[i].category == "Entertainment") entertainment += expenses[i].amount
-            else if (expenses[i].category == "Shopping") shopping += expenses[i].amount
-            else other += expenses[i].amount
-        }
+        for e in expenses:
+            if e["category"] == "Food":
+                food = food + e["amount"]
+            elif e["category"] == "Travel":
+                travel = travel + e["amount"]
+            elif e["category"] == "Entertainment":
+                entertainment = entertainment + e["amount"]
+            elif e["category"] == "Shopping":
+                shopping = shopping + e["amount"]
+            else:
+                other = other + e["amount"]
 
-        document.getElementById("output").innerText =
-            "Food: ₹" + food +
-            " | Travel: ₹" + travel +
-            " | Entertainment: ₹" + entertainment +
-            " | Shopping: ₹" + shopping +
-            " | Other: ₹" + other
-    }
+        print("Food Total:", food)
+        print("Travel Total:", travel)
+        print("Entertainment Total:", entertainment)
+        print("Shopping Total:", shopping)
+        print("Other Total:", other)
 
-    function showTotal() {
+    elif choice == "4":
         total = 0
-        for (i = 0; i < expenses.length; i++) {
-            total += expenses[i].amount
-        }
+        for e in expenses:
+            total = total + e["amount"]
 
-        balance = totalMoney - total
+        balance = total_money - total
 
-        document.getElementById("output").innerText =
-            period + " Total: ₹" + total +
-            " | Remaining Balance: ₹" + balance
-    }
+        print(period, "Expense Total:", total)
+        print("Remaining Balance:", balance)
 
-    function deleteLast() {
-        if (expenses.length == 0) {
-            alert("No expense to delete")
-        } else {
+    elif choice == "5":
+        if expenses == []:
+            print("No expense to delete")
+        else:
             expenses.pop()
-            showExpenses()
-        }
-    }
-</script>
+            print("Last expense deleted")
 
-</body>
-</html>
+    elif choice == "6":
+        print("Thank you")
+        break
 
+    else:
+        print("Invalid choice") 
